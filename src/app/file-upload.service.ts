@@ -11,15 +11,10 @@ export class FileUploadService {
   uploadFile(file) {
     const formData = new FormData();
     formData.append('file', file);
-    return this.HttpClient.post(
-      `${environment.fileUploadURL}/upload`,
-      formData
-    );
+    return this.HttpClient.post(`${environment.apiURL}/upload`, formData);
   }
 
   deleteFile(filename) {
-    return this.HttpClient.delete(
-      `${environment.fileUploadURL}/delete` + filename
-    );
+    return this.HttpClient.delete(`${environment.apiURL}/delete` + filename);
   }
 }

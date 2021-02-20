@@ -5,9 +5,9 @@
         <p class="title">VidToGif</p>
       </div>
     </div>
-    <div class="row no-gutters">
+    <div class="row no-gutters" style="flex: auto">
       <div class="col-5">
-        <div class="p-4">
+        <div *ngIf="!filePath" class="p-4">
           <p class="mb-2">Select a video file to be converted:</p>
           <div class="custom-file">
             <input
@@ -24,7 +24,7 @@
             File name: <strong>{{ uploadedFile.name }}</strong>
           </p>
           <button
-            *ngIf="uploadedFile"
+            *ngIf="uploadedFile && !filePath"
             type="button"
             class="btn btn-primary w-100 mt-3"
             [disabled]="isUploading"
@@ -39,9 +39,91 @@
             ></div>
           </div>
         </div>
+        <div *ngIf="filePath" class="p-4">
+          <div class="upload__notif text-center">
+            <p>File was uploaded successfully.</p>
+          </div>
+          <form [formGroup]="gifForm">
+            <p class="mt-4 mb-2">GIF Options</p>
+            <div class="row no-gutters">
+              <div class="col p-2">
+                <input
+                  name="gifFormStart"
+                  class="form-control"
+                  type="number"
+                  formControlName="start"
+                  placeholder="Start (sec.)"
+                />
+              </div>
+              <div class="col p-2">
+                <input
+                  name="gifFormEnd"
+                  class="form-control"
+                  type="number"
+                  formControlName="end"
+                  placeholder="End (sec.)"
+                />
+              </div>
+            </div>
+            <div class="row no-gutters">
+              <div class="col p-2">
+                <input
+                  name="gifFormWidth"
+                  class="form-control"
+                  type="number"
+                  formControlName="width"
+                  placeholder="Width (px)"
+                />
+              </div>
+              <div class="col p-2">
+                <input
+                  name="gifFormHeight"
+                  class="form-control"
+                  type="number"
+                  formControlName="height"
+                  placeholder="Height (px)"
+                />
+              </div>
+            </div>
+            <button
+              type="button"
+              class="btn btn-primary w-100 mt-3"
+              [disabled]="isConverting"
+              (click)="convertFile()"
+            >
+              {{ convertBtnText }}
+            </button>
+            <div *ngIf="isConverting" class="progress mt-2">
+              <div
+                class="progress-bar progress-bar-striped progress-bar-animated w-100"
+                role="progressbar"
+              ></div>
+            </div>
+          </form>
+        </div>
       </div>
-      <div class="col-7">
-        <img *ngIf="imageSource" [src]="imageSource" alt="" />
+      <div class="col-7 border--left">
+        <div class="p-4">
+          <p class="mb-2">Preview:</p>
+          <img
+            *ngIf="imageSource"
+            [src]="imageSource"
+            [ngStyle]="{ opacity: isConverting ? '0.4' : '1' }"
+            alt=""
+            class="gif__preview"
+          />
+          <p *ngIf="imageSource" class="preview__note">
+            (gif is stretched to fit the preview)
+          </p>
+          <button
+            *ngIf="hasGIF"
+            type="button"
+            class="btn btn-primary w-100 mt-3"
+            (click)="downloadGIF()"
+          >
+            Download GIF
+          </button>
+        </div>
       </div>
     </div>
   </div>

@@ -8,8 +8,10 @@
 }
 
 .converter__wrapper {
+  display: flex;
+  flex-direction: column;
   width: 800px;
-  height: 700px;
+  height: 800px;
   background-color: white;
   border-radius: 10px;
 }
@@ -30,4 +32,27 @@
 .file__name {
   font-size: 0.7rem;
   color: var(--info);
+}
+
+.border--left {
+  border-left: 1px solid var(--secondary);
+}
+
+.upload__notif {
+  background-color: var(--info);
+  padding: 0.5rem 0;
+
+  p {
+    font-size: 1.3rem;
+    color: var(--secondary);
+  }
+}
+
+.gif__preview {
+  width: 100%;
+}
+
+.preview__note {
+  margin-top: 1rem;
+  font-size: 0.75rem;
 }

@@ -1,4 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { FileUploadService } from '../file-upload.service';
 
@@ -12,61 +14,108 @@ declare var gifshot, $;
 export class ConverterComponent implements OnInit, OnDestroy {
   imageSource: string;
   uploadedFile: File;
+  filePath: string = '';
 
-  config = {
-    uploadAPI: {
-      url: 'http://localhost:5000/upload',
-    },
-    multiple: false,
-    formatsAllowed: '.mp4',
-    maxSize: '100',
-  };
+  gifForm = new FormGroup({
+    start: new FormControl(),
+    end: new FormControl(),
+    width: new FormControl(),
+    height: new FormControl(),
+  });
 
-  filename: string = '';
   isUploading: boolean = false;
-  uploadBtnText = 'Upload & Convert';
+  isConverting: boolean = false;
+  uploadBtnText = 'Upload';
+  convertBtnText = 'Create GIF';
+  hasGIF: boolean = false;
+  downloadTrigger: any;
+
+  subscriptions$: Subscription[] = [];
 
   constructor(private FileUploadService: FileUploadService) {}
 
   ngOnInit(): void {}
 
   ngOnDestroy() {
-    this.FileUploadService.deleteFile(this.filename).subscribe((response) => {
-      console.log(response);
-    });
+    this.subscriptions$.push(
+      this.FileUploadService.deleteFile(this.filePath).subscribe((response) => {
+        console.log(response);
+      })
+    );
+
+    this.subscriptions$.forEach((s) => s.unsubscribe());
+  }
+
+  convertFile() {
+    this.convertBtnText = 'Creating GIF...';
+    this.isConverting = true;
+    let video = document.createElement('video');
+    video.preload = 'metadata';
+
+    let videoDuration;
+
+    const _this = this;
+    video.onloadedmetadata = function () {
+      window.URL.revokeObjectURL(video.src);
+      videoDuration = video.duration;
+
+      // TODO: VALIDATION
+
+      gifshot.createGIF(
+        {
+          video: `${environment.apiURL}${_this.filePath}`,
+          numFrames:
+            (_this.gifForm.get('end').value -
+              _this.gifForm.get('start').value) *
+            10,
+          offset: _this.gifForm.get('start').value,
+          gifWidth: _this.gifForm.get('width').value,
+          gifHeight: _this.gifForm.get('height').value,
+        },
+        (obj) => {
+          if (!obj.error) {
+            _this.imageSource = obj.image;
+
+            _this.downloadTrigger = $('<a>')
+              .attr('href', _this.imageSource)
+              .attr('download', _this.uploadedFile.name.split('.')[0] + '.gif')
+              .appendTo('body');
+
+            // _this.uploadedFile = null;
+            _this.isConverting = false;
+            _this.hasGIF = true;
+            _this.convertBtnText = 'Create GIF';
+
+            video.remove();
+          }
+        }
+      );
+    };
+
+    video.src = URL.createObjectURL(this.uploadedFile);
   }
 
   uploadFile() {
     $('#customFile').val('');
     this.isUploading = true;
     this.uploadBtnText = 'Uploading...';
-    this.FileUploadService.uploadFile(this.uploadedFile).subscribe(
-      (response: any) => {
-        console.log(response);
-        this.filename = response.message;
-        this.uploadBtnText = 'Converting to GIF...';
-        gifshot.createGIF(
-          {
-            video: `http://localhost:5000${response.message}`,
-            numFrames: 30,
-            gifWidth: 400,
-            gifHeight: 400,
-          },
-          (obj) => {
-            if (!obj.error) {
-              this.imageSource = obj.image;
-              this.uploadedFile = null;
-              this.isUploading = false;
-              this.uploadBtnText = 'Upload & Convert';
-            }
-          }
-        );
-      }
+    this.subscriptions$.push(
+      this.FileUploadService.uploadFile(this.uploadedFile).subscribe(
+        (response: any) => {
+          this.filePath = response.message;
+          this.isUploading = false;
+        }
+      )
     );
   }
 
   fileBrowsed(event) {
     this.uploadedFile = event.target.files[0];
-    console.log(this.uploadedFile);
+  }
+
+  downloadGIF() {
+    this.downloadTrigger[0].click();
+
+    // this.downloadTrigger.remove();
   }
 }
