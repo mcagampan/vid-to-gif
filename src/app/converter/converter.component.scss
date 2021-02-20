@@ -1,0 +1,33 @@
+.backdrop {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--secondary);
+}
+
+.converter__wrapper {
+  width: 800px;
+  height: 700px;
+  background-color: white;
+  border-radius: 10px;
+}
+
+.title__wrapper {
+  background-color: var(--primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px 10px 0 0;
+}
+
+.title {
+  font-size: 8em;
+  color: var(--secondary);
+}
+
+.file__name {
+  font-size: 0.7rem;
+  color: var(--info);
+}

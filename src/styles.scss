@@ -1,1 +1,43 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --primary: #050533;
+  --secondary: #f2f1e8;
+  --info: #0d698b;
+  --danger: #e34234;
+}
+
+$theme-colors: (
+  "primary": #050533,
+  "secondary": #f2f1e8,
+  "info": #0d698b,
+  "danger": #e34234,
+);
+
+@import "node_modules/bootstrap/scss/bootstrap";
+
+@font-face {
+  font-family: "Overpass";
+  font-weight: 400;
+  src: url(assets/fonts/Overpass-Regular.ttf);
+}
+
+@font-face {
+  font-family: "Overpass Light";
+  font-weight: 200;
+  src: url(assets/fonts/Overpass-Light.ttf);
+}
+
+@font-face {
+  font-family: "Overpass Bold";
+  font-weight: 900;
+  src: url(assets/fonts/Overpass-Bold.ttf);
+}
+
+body {
+  font-family: "Overpass";
+  margin: 0;
+  font-size: 16px;
+}
+
+p {
+  margin: 0;
+}

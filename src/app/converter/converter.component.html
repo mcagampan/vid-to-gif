@@ -1,0 +1,48 @@
+<div class="backdrop">
+  <div class="converter__wrapper container p-0">
+    <div class="row no-gutters">
+      <div class="title__wrapper col">
+        <p class="title">VidToGif</p>
+      </div>
+    </div>
+    <div class="row no-gutters">
+      <div class="col-5">
+        <div class="p-4">
+          <p class="mb-2">Select a video file to be converted:</p>
+          <div class="custom-file">
+            <input
+              type="file"
+              class="custom-file-input"
+              id="customFile"
+              (change)="fileBrowsed($event)"
+            />
+            <label class="custom-file-label" for="customFile"
+              >Choose file</label
+            >
+          </div>
+          <p *ngIf="uploadedFile" class="file__name mt-2">
+            File name: <strong>{{ uploadedFile.name }}</strong>
+          </p>
+          <button
+            *ngIf="uploadedFile"
+            type="button"
+            class="btn btn-primary w-100 mt-3"
+            [disabled]="isUploading"
+            (click)="uploadFile()"
+          >
+            {{ uploadBtnText }}
+          </button>
+          <div *ngIf="isUploading" class="progress mt-2">
+            <div
+              class="progress-bar progress-bar-striped progress-bar-animated w-100"
+              role="progressbar"
+            ></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-7">
+        <img *ngIf="imageSource" [src]="imageSource" alt="" />
+      </div>
+    </div>
+  </div>
+</div>
